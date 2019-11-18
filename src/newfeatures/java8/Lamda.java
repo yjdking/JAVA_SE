@@ -9,6 +9,9 @@ public class Lamda {
 
     public List<String> arrayList1 = Arrays.asList("1","2");
 
+    public void testlamda() {
+        arrayList.forEach(element -> System.out.println("test: " + element));
+    }
 }
 
 
