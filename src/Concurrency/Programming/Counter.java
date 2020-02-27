@@ -8,7 +8,8 @@ import java.util.concurrent.atomic.AtomicLongArray;
 public class Counter {
     private AtomicInteger atomicInteger = new AtomicInteger(0);
     AtomicInteger test = new AtomicInteger(0);
-    private int i = 0;
+    private volatile int i = 0;
+
     public static void main(String[] args) {
         final Counter cas = new Counter();
         List<Thread> list = new ArrayList<Thread>(600);
@@ -25,6 +26,7 @@ public class Counter {
             });
             list.add(t);
         }
+
         for(Thread t : list) {
             t.start();
         }
@@ -48,9 +50,11 @@ public class Counter {
                 e.printStackTrace();
             }
         }
+
+
         System.out.println(cas.i);
         System.out.println(cas.atomicInteger.get());
-        System.out.println(cas.test.get());
+        // System.out.println(cas.test.get());
     }
 
 
@@ -58,6 +62,8 @@ public class Counter {
         // 如果i的值变动，循环
         while (true) {
             int i = atomicInteger.get();
+            // CAS有3个操作数，内存值V，旧的预期值A，要修改的新值B。
+            // 当且仅当预期值A和内存值V相同时，将内存值V修改为B，否则什么都不做
             boolean suc = atomicInteger.compareAndSet(i, ++i);
             if(suc) {
                 break;
